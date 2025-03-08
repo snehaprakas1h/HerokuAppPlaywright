@@ -48,3 +48,10 @@ jobs:
           name: playwright-html-report
           path: playwright-report/
           retention-days: 30
+
+      - name: Deploy Allure Report to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # The branch to deploy to
+          folder: allure-report  # The folder containing the report
+          clean: true  # Optional: cleans previous deployment
