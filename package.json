@@ -1,0 +1,20 @@
+{
+  "name": "herokuappplaywright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Playwright test framework for the-internet.herokuapp.com",
+  "type": "module",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.9"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
