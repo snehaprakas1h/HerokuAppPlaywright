@@ -5,7 +5,7 @@
   "description": "Playwright test framework for the-internet.herokuapp.com",
   "type": "module",
   "scripts": {
-    "test": "npx playwright test"
+     "generate-allure": "npx allure generate allure-results --clean -o allure-report"
   },
   "keywords": [],
   "author": "",
