@@ -55,3 +55,4 @@ jobs:
           branch: gh-pages  # The branch to deploy to
           folder: allure-report  # The folder containing the report
           clean: true  # Optional: cleans previous deployment
+          token: ${{ secrets.GH_TOKEN}}
