@@ -25,7 +25,7 @@ This repository contains an **ES6-based Playwright framework** for automating te
 ## **🚀 Setup & Installation**
 ### **1️⃣ Clone the Repository**
 ```sh
-git clone <repo-url>
+git clone https://github.com/snehaprakas1h/HerokuAppPlaywright.git
 cd the-internet-playwright-framework
 ```
 

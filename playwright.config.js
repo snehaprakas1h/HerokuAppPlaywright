@@ -10,5 +10,9 @@ export default defineConfig({
         screenshot: 'only-on-failure', // Capture screenshot on failure
         video: 'retain-on-failure' // Capture video on failure
     },
-    reporter: [['html', { outputFolder: 'reports' }]], // HTML report
+    reporter: [
+        ['line'],
+        ['allure-playwright', { resultsDir: 'allure-results' }],
+        ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ],
 });
