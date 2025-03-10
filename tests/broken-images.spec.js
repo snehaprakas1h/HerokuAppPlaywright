@@ -53,5 +53,5 @@ test.describe.serial('Broken Images Page', () => { //Forces tests to run sequent
 
     test.afterAll(async () => {
         await brokenImagesPage.page.close();
-    })
+    });
 })
