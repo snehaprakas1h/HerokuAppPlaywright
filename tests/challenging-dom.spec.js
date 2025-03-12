@@ -144,7 +144,7 @@ test.describe('Challenging DOM Page', () => {
     });
 
     test.afterAll(async () => {
-        await brokenImagesPage.page.close();
+        await challengingDOMPage.page.close();
     });
 
 });

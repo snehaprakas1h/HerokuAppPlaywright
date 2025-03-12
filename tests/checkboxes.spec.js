@@ -14,7 +14,7 @@ test.describe('Verify checkboxes page', () => {
 
     test.beforeEach(async () => {
         try {
-            checkBoxesPage.goto();
+            await checkBoxesPage.goto();
         } catch (error) {
             console.log('Error during navigation', error);
             throw error;

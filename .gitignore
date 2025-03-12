@@ -8,3 +8,4 @@ node_modules/
 /allure-report/
 /allure-results/
 /*.png
+/tests/example.spec.js
