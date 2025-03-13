@@ -9,3 +9,4 @@ node_modules/
 /allure-results/
 /*.png
 /tests/example.spec.js
+/notes
