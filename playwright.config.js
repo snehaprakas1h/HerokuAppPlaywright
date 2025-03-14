@@ -15,4 +15,17 @@ export default defineConfig({
         ['allure-playwright', { resultsDir: 'allure-results' }],
         ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ],
+
+    projects: [
+        {
+          name: "chromium",
+          use: {
+            // 2 (Make sure device is not set)
+            // ...devices["Desktop Chrome"],
+    
+            // 3
+            viewport: null, //for full view
+          },
+        },
+    ],
 });
