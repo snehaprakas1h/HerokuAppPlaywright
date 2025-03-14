@@ -8,7 +8,10 @@ export default defineConfig({
         baseURL: 'https://the-internet.herokuapp.com', // Configurable Base URL
         headless: true, // Run tests in headless mode
         screenshot: 'only-on-failure', // Capture screenshot on failure
-        video: 'retain-on-failure' // Capture video on failure
+        video: 'retain-on-failure', // Capture video on failure
+        launchOptions: {
+            args: ['--start-maximized'], // For full screen
+        },
     },
     reporter: [
         ['line'],
@@ -27,5 +30,5 @@ export default defineConfig({
             viewport: null, //for full view
           },
         },
-    ],
+      ],
 });

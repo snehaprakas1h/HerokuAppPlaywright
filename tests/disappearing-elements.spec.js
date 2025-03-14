@@ -26,7 +26,7 @@ test.describe('Disappearing elements tests',async()=>{
         expect(headerText).toBe('Disappearing Elements');
     });
 
-    test('Verigy body text',async()=>{
+    test('Verify body text',async()=>{
         const bodyText = await disappearingElementsPage.getBodyText();
         expect(bodyText).toContain('disappearing/reappearing');
     });
