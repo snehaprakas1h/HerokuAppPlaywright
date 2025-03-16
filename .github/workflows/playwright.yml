@@ -34,32 +34,36 @@ jobs:
           path: allure-history
         continue-on-error: true
 
-      # Step 2: Run Playwright tests and generate Allure report
+      # Step 2: Run Playwright tests and handle failure
       - name: Run Playwright tests
         run: |
           if [ -d allure-results ]; then rm -rf allure-results; fi
           mkdir allure-results
           cp -r allure-history/history allure-results/ || true
           npx playwright test || echo "Playwright tests failed"
-          npx allure generate allure-results --clean
 
-      # Step 3: Upload Allure Report
+      # Step 3: Generate Allure Report (even if tests fail)
+      - name: Generate Allure Report
+        run: npx allure generate allure-results --clean || echo "Allure report generation failed"
+
+      # Step 4: Upload Allure Report
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report/
 
-      # Step 4: Save Allure history for future runs
+      # Step 5: Save Allure history for future runs
       - name: Save Allure history
         uses: actions/upload-artifact@v4
+        if: success() || failure()  # Save history even on failure
         with:
           name: allure-history
           path: allure-report/history/
-        
-      # Step 5: Deploy to GitHub Pages
+
+      # Step 6: Deploy Allure report to GitHub Pages
       - name: Deploy to GitHub Pages
-        if: always()
+        if: always()  # Deploy even if tests fail
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
