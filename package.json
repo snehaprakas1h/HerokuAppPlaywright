@@ -5,7 +5,8 @@
   "description": "Playwright test framework for the-internet.herokuapp.com",
   "type": "module",
   "scripts": {
-      "generate-allure": "allure generate allure-results -o allure-report"
+    "generate-allure": "allure generate allure-results --clean && allure open",
+     "test:allure": "if exist allure-results rmdir /s /q allure-results && mkdir allure-results && xcopy /E /I allure-history allure-results\\history && npx playwright test && npx allure generate allure-results --clean && npx allure open && (xcopy /E /I allure-report\\history allure-history || echo 'No history found')"
   },
   "keywords": [],
   "author": "",

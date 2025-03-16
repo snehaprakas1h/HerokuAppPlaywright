@@ -1,16 +1,11 @@
 name: Playwright Tests
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
 
 jobs:
   test:
@@ -31,23 +26,32 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Download Allure history
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: allure-history
+
       - name: Run Playwright tests
         run: |
+          if exist allure-results rmdir /s /q allure-results
+          mkdir allure-results
+          xcopy /E /I allure-history allure-results\history
           npx playwright test || echo "Playwright tests failed"
 
       - name: Install Allure
         run: npm install -D allure-commandline
 
       - name: Generate Allure Report
-        run: npm run generate-allure
-
-      - name: Upload Allure Report as Artifact
+        run: npx allure generate allure-results --clean
+      
+      - name: Upload Allure history for next runs
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: allure-report/
+          name: allure-history
+          path: allure-report/history
 
-      - name: Upload Playwright HTML report as Artifact
+      - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -55,23 +59,10 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Download Allure Report
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-report
-          path: public
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
       - name: Deploy Allure Report to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: allure-report
+          clean: true
