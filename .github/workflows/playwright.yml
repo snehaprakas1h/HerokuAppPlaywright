@@ -32,9 +32,9 @@ jobs:
         with:
           name: allure-history
           path: allure-history
-        continue-on-error: true
+        continue-on-error: true  # Ignore error in first run
 
-      # ✅ Run Playwright tests and handle failure
+      # ✅ Create Allure Results folder and copy history
       - name: Run Playwright tests
         run: |
           if [ -d allure-results ]; then rm -rf allure-results; fi
