@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "generate-allure": "allure generate allure-results --clean -o allure-report",
-     "test:allure": "if exist allure-results rmdir /s /q allure-results && mkdir allure-results && xcopy /E /I allure-history allure-results\\history && npx playwright test && npx allure generate allure-results --clean && npx allure open && (xcopy /E /I allure-report\\history allure-history || echo 'No history found')"
+    "test:allure": "if exist allure-results rmdir /s /q allure-results && mkdir allure-results && xcopy /E /I allure-history allure-results\\history && npx playwright test && npx allure generate allure-results --clean && npx allure open && (xcopy /E /I allure-report\\history allure-history || echo 'No history found')"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +14,7 @@
   "devDependencies": {
     "@playwright/test": "^1.51.0",
     "@types/node": "^22.13.9",
+    "allure-commandline": "^2.24.0",
     "allure-playwright": "^3.2.0"
   },
   "dependencies": {

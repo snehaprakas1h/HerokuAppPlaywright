@@ -1,74 +1,65 @@
-name: Playwright Tests
+name: Playwright Tests with Allure Report 🚀
 
 on:
-  workflow_dispatch:  # Allows manual triggering
   push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  test:
-    timeout-minutes: 60
+  run-tests:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Node.js
+    steps:
+      - name: Checkout code ✅
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js environment 🟢
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies 📦
+        run: npm install
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      # ✅ Download Allure history from previous run
-      - name: Download Allure history
+      # Download previous Allure history
+      - name: Download Allure History 📥
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-history
           path: allure-history
-        continue-on-error: true  # Ignore error in first run
 
-      # ✅ Create Allure Results folder and copy history
-      - name: Run Playwright tests
+      # Run Playwright tests and copy previous history
+      - name: Run Playwright tests 🏁
         run: |
-          if [ -d allure-results ]; then rm -rf allure-results; fi
-          mkdir allure-results
+          mkdir -p allure-results
           cp -r allure-history/history allure-results/ || true
           npx playwright test || echo "Playwright tests failed"
 
-      # ✅ Generate Allure Report with history
-      - name: Generate Allure Report
+      # Generate Allure report with history
+      - name: Generate Allure Report 🎯
         run: |
-          mkdir allure-report || true
-          npx allure generate allure-results --clean -o allure-report || echo "Allure report generation failed"
+          mkdir -p allure-report
+          npx allure generate allure-results -o allure-report --clean || echo "Allure report generation failed"
 
-      # ✅ Upload Allure Report as Artifact
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: allure-report/
-
-      # ✅ Save Allure history for future runs
-      - name: Save Allure history
+      # Upload Allure History
+      - name: Save Allure History 📤
         uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           name: allure-history
           path: allure-report/history/
 
-      # ✅ Deploy Allure Report to GitHub Pages
-      - name: Deploy to GitHub Pages
+      # Deploy Allure Report to GitHub Pages
+      - name: Deploy Allure Report to GitHub Pages 🚀
         if: always()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: allure-report
           clean: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
