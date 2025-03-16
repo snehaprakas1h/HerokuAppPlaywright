@@ -26,22 +26,22 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # Step 1: Download previous Allure history (if exists)
+      # Step 1: Download Allure history (if exists)
       - name: Download Allure history
         uses: actions/download-artifact@v4
         with:
           name: allure-history
           path: allure-history
-        continue-on-error: true  # Continue even if history is not available
+        continue-on-error: true
 
-      # Step 2: Run Playwright tests
+      # Step 2: Run Playwright tests and generate Allure report
       - name: Run Playwright tests
         run: |
-          if exist allure-results rmdir /s /q allure-results 
+          if [ -d allure-results ]; then rm -rf allure-results; fi
           mkdir allure-results
-          xcopy /E /I allure-history allure-results\history 
+          cp -r allure-history/history allure-results/ || true
           npx playwright test || echo "Playwright tests failed"
-          npx allure generate allure-results --clean && npx allure open
+          npx allure generate allure-results --clean
 
       # Step 3: Upload Allure Report
       - name: Upload Allure Report
