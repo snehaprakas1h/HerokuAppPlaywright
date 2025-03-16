@@ -26,7 +26,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # Step 1: Download Allure history (if exists)
+      # ✅ Download Allure history from previous run
       - name: Download Allure history
         uses: actions/download-artifact@v4
         with:
@@ -34,7 +34,7 @@ jobs:
           path: allure-history
         continue-on-error: true
 
-      # Step 2: Run Playwright tests and handle failure
+      # ✅ Run Playwright tests and handle failure
       - name: Run Playwright tests
         run: |
           if [ -d allure-results ]; then rm -rf allure-results; fi
@@ -42,28 +42,30 @@ jobs:
           cp -r allure-history/history allure-results/ || true
           npx playwright test || echo "Playwright tests failed"
 
-      # Step 3: Generate Allure Report (even if tests fail)
+      # ✅ Generate Allure Report with history
       - name: Generate Allure Report
-        run: npx allure generate allure-results --clean || echo "Allure report generation failed"
+        run: |
+          mkdir allure-report || true
+          npx allure generate allure-results --clean -o allure-report || echo "Allure report generation failed"
 
-      # Step 4: Upload Allure Report
+      # ✅ Upload Allure Report as Artifact
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report/
 
-      # Step 5: Save Allure history for future runs
+      # ✅ Save Allure history for future runs
       - name: Save Allure history
         uses: actions/upload-artifact@v4
-        if: success() || failure()  # Save history even on failure
+        if: success() || failure()
         with:
           name: allure-history
           path: allure-report/history/
 
-      # Step 6: Deploy Allure report to GitHub Pages
+      # ✅ Deploy Allure Report to GitHub Pages
       - name: Deploy to GitHub Pages
-        if: always()  # Deploy even if tests fail
+        if: always()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
