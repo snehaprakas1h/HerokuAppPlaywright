@@ -1,16 +1,11 @@
 name: Playwright Tests
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
 
 jobs:
   test:
@@ -33,45 +28,33 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          npx playwright test || echo "Playwright tests failed"
+          npx playwright test || echo "Playwright tests failed" # Handle failures
 
       - name: Install Allure
         run: npm install -D allure-commandline
 
       - name: Generate Allure Report
         run: npm run generate-allure
-
-      - name: Upload Allure Report as Artifact
+      
+      - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report/
-
-      - name: Upload Playwright HTML report as Artifact
+      
+      - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always()  # Runs even if tests fail
         with:
           name: playwright-html-report
           path: playwright-report/
           retention-days: 30
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Download Allure Report
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-report
-          path: public
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
       - name: Deploy Allure Report to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        if: always()  # Deploy even on test failure
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # The branch to deploy to
+          folder: allure-report  # The folder containing the report
+          clean: true
+          token: ${{ secrets.GH_TOKEN }}

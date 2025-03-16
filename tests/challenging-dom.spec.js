@@ -29,7 +29,7 @@ test.describe('Challenging DOM Page', () => {
         expect(bodyText).toContain('example demonstrates that with unique');
     })
 
-    test.skip('Verify colored buttons are present and clickable', async () => {
+    test('Verify colored buttons are present and clickable', async () => {
         // Store the button text before clicking
         const blueButtonTextBefore = await challengingDOMPage.getBlueButtonText();
         const redButtonTextBefore = await challengingDOMPage.getRedButtonText();
