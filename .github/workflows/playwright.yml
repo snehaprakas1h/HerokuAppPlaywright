@@ -1,7 +1,7 @@
-name: Playwright Tests
+name: Playwright Tests with Allure Report 🚀
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch: # Manual Trigger
   push:
     branches: [main, master]
   pull_request:
@@ -11,50 +11,73 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout the code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      # 4️⃣ Install Playwright Browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
+      # 5️⃣ Copy Allure History from Previous Run (for history tracking)
+      - name: Copy Allure history from previous run
+        if: always()
         run: |
-          npx playwright test || echo "Playwright tests failed"
+          mkdir -p allure-results
+          if [ -d allure-history ]; then
+            cp -r allure-history/history allure-results/ || true
+          fi
 
+      # 6️⃣ Run Playwright Tests
+      - name: Run Playwright Tests
+        run: |
+          npx playwright test || echo "Playwright tests failed" # To prevent workflow failure
+      
+      # 7️⃣ Install Allure command-line
       - name: Install Allure
         run: npm install -D allure-commandline
 
-      # ✅ Create Allure history folder if not present
-      - name: Setup Allure History
-        run: |
-          mkdir -p allure-history
-          if [ -d allure-results ]; then
-            mv allure-results allure-history/ || true
-          fi
-
-      # ✅ Generate Allure report even if tests fail
+      # 8️⃣ Generate Allure Report
       - name: Generate Allure Report
-        if: always()
         run: npm run generate-allure
-
-      # ✅ Upload Allure Report for history tracking
-      - name: Upload Allure Report with History
+      
+      # 9️⃣ Upload Allure Report as Artifact
+      - name: Upload Allure Report
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: allure-report
-          path: allure-history
+          path: allure-report/
 
-      # ✅ Upload Playwright HTML Report (always runs)
+      # 🔟 Save Allure History for the next run
+      - name: Save Allure history
+        if: always()
+        run: |
+          mkdir -p allure-history
+          cp -r allure-report/history allure-history/ || true
+
+      # 1️⃣1️⃣ Deploy Allure Report to GitHub Pages
+      - name: Deploy Allure Report to GitHub Pages
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: allure-report
+          clean: true
+          token: ${{ secrets.GH_TOKEN }}
+
+      # 1️⃣2️⃣ Upload Playwright HTML Report (Optional)
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
         if: always()
@@ -62,13 +85,3 @@ jobs:
           name: playwright-html-report
           path: playwright-report/
           retention-days: 30
-
-      # ✅ Deploy Allure Report to GitHub Pages with history tracking
-      - name: Deploy Allure Report to GitHub Pages
-        if: always()
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: allure-history
-          clean: false
-          token: ${{ secrets.GH_TOKEN }}
