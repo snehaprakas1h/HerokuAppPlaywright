@@ -26,43 +26,43 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # Step 1: Download previous Allure history (if exists)
       - name: Download Allure history
         uses: actions/download-artifact@v4
         with:
           name: allure-history
           path: allure-history
+        continue-on-error: true  # Continue even if history is not available
 
+      # Step 2: Run Playwright tests
       - name: Run Playwright tests
         run: |
-          if exist allure-results rmdir /s /q allure-results
+          if exist allure-results rmdir /s /q allure-results 
           mkdir allure-results
-          xcopy /E /I allure-history allure-results\history
+          xcopy /E /I allure-history allure-results\history 
           npx playwright test || echo "Playwright tests failed"
+          npx allure generate allure-results --clean && npx allure open
 
-      - name: Install Allure
-        run: npm install -D allure-commandline
+      # Step 3: Upload Allure Report
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
 
-      - name: Generate Allure Report
-        run: npx allure generate allure-results --clean
-      
-      - name: Upload Allure history for next runs
+      # Step 4: Save Allure history for future runs
+      - name: Save Allure history
         uses: actions/upload-artifact@v4
         with:
           name: allure-history
-          path: allure-report/history
-
-      - name: Upload Playwright HTML report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-html-report
-          path: playwright-report/
-          retention-days: 30
-
-      - name: Deploy Allure Report to GitHub Pages
+          path: allure-report/history/
+        
+      # Step 5: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         if: always()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: allure-report
           clean: true
+          token: ${{ secrets.GH_TOKEN }}
