@@ -1,0 +1,93 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Drag and drop tests >> Verify heading text
+- Location: /home/runner/work/HerokuAppPlaywright/HerokuAppPlaywright/tests/drag-and-drop.spec.js:25:5
+
+# Error details
+
+```
+Error: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1161/chrome-linux/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+```
+
+# Test source
+
+```ts
+   1 | ///<reference types='playwright'/>
+   2 |
+   3 | import { test, expect } from '@playwright/test';
+   4 | import DragAndDropPage from '../pages/drag-and-drop.page';
+   5 |
+   6 | test.describe('Drag and drop tests', async () => {
+   7 |
+   8 |     /**@type {DragAndDropPage} */
+   9 |     let dragAndDropPage;
+  10 |
+  11 |     test.beforeAll(async ({ browser }) => {
+  12 |         const page = await browser.newPage()
+  13 |         dragAndDropPage = new DragAndDropPage(page);
+  14 |     });
+  15 |
+  16 |     test.beforeEach(async()=>{
+  17 |         try{
+  18 |             await dragAndDropPage.goto();
+  19 |         }catch(error){
+  20 |             console.log('Error in navigation',error);
+  21 |             throw error;
+  22 |         }
+  23 |     });
+  24 |
+> 25 |     test('Verify heading text',async()=>{
+     |     ^ Error: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1161/chrome-linux/headless_shell
+  26 |         const headingText = await dragAndDropPage.getHeadingText();
+  27 |         expect(headingText).toBe('Drag and Drop');
+  28 |     });
+  29 |
+  30 |     test('Should drag and drop using dragTo()',async()=>{
+  31 |         await dragAndDropPage.dragUsingDragTo();
+  32 |         expect(await dragAndDropPage.getColumnHeader('column-a')).toBe('B');
+  33 |         expect(await dragAndDropPage.getColumnHeader('column-b')).toBe('A');
+  34 |     })
+  35 |
+  36 |     test('Should drag and drop using mouse movements()',async()=>{
+  37 |         await dragAndDropPage.dragUsingMouse();
+  38 |         expect(await dragAndDropPage.getColumnHeader('column-a')).toBe('B');
+  39 |         expect(await dragAndDropPage.getColumnHeader('column-b')).toBe('A');
+  40 |     });
+  41 |
+  42 |     test.skip('Should drag and drop using evaluate()',async()=>{
+  43 |         await dragAndDropPage.dragUsingEvaluate();
+  44 |         expect(await dragAndDropPage.getColumnHeader('column-a')).toBe('B');
+  45 |         expect(await dragAndDropPage.getColumnHeader('column-b')).toBe('A');
+  46 |     });
+  47 |
+  48 |     test.skip('Should drag and drop using dispatchEvent()',async()=>{
+  49 |         await dragAndDropPage.dragUsingDispatchEvent();
+  50 |         expect(await dragAndDropPage.getColumnHeader('column-a')).toBe('B');
+  51 |         expect(await dragAndDropPage.getColumnHeader('column-b')).toBe('A');
+  52 |     });
+  53 |
+  54 |     test('Should drag and drop using hover() and mouse events',async()=>{
+  55 |         await dragAndDropPage.drapUsingHoverAndMouse();
+  56 |         expect(await dragAndDropPage.getColumnHeader('column-a')).toBe('B');
+  57 |         expect(await dragAndDropPage.getColumnHeader('column-b')).toBe('A');
+  58 |     });
+  59 |
+  60 |     test.afterAll(async()=>{
+  61 |         await dragAndDropPage.page.close();
+  62 |     })
+  63 | })
+```

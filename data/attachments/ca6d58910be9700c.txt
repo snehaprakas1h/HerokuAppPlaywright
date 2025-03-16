@@ -1,0 +1,65 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: A/B Test Page >> Verify A/B test heading is displayed correctly
+- Location: /home/runner/work/HerokuAppPlaywright/HerokuAppPlaywright/tests/ab-test.spec.js:21:5
+
+# Error details
+
+```
+Error: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1161/chrome-linux/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+```
+
+# Test source
+
+```ts
+   1 | import { test, expect } from '@playwright/test';
+   2 | import ABTestPage from '../pages/ab-test.page.js';
+   3 |
+   4 | test.describe('A/B Test Page', () => {
+   5 |     /** @type {ABTestPage} */
+   6 |     let abTestPage;
+   7 |
+   8 |     test.beforeAll(async ({ browser }) => {
+   9 |         const page = await browser.newPage();
+  10 |         abTestPage = new ABTestPage(page);
+  11 |     })
+  12 |
+  13 |     test.beforeEach(async () => {
+  14 |         try { await abTestPage.goto() }
+  15 |         catch (error) {
+  16 |             console.error('Error during navigation:', error);
+  17 |             throw error;
+  18 |         };
+  19 |     })
+  20 |
+> 21 |     test('Verify A/B test heading is displayed correctly', async () => {
+     |     ^ Error: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1161/chrome-linux/headless_shell
+  22 |         const headingText = await abTestPage.getHeadingText();
+  23 |         expect(headingText).toMatch(/A\/B Test/);
+  24 |     })
+  25 |
+  26 |     test('Verify body text explaining the test is displayed and has enough length', async () => {
+  27 |         const bodyText = await abTestPage.getBodyText();
+  28 |         expect(bodyText.length).toBeGreaterThan(10);
+  29 |     })
+  30 |
+  31 |     test.afterAll(async () => {
+  32 |         await abTestPage.page.close();
+  33 |     })
+  34 | })
+  35 |
+```
