@@ -1,1 +1,0 @@
-Navigating to: https://admin:admin@the-internet.herokuapp.com/digest_auth

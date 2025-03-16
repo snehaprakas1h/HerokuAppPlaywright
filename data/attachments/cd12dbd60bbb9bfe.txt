@@ -1,2 +1,0 @@
-https://the-internet.herokuapp.com
-Broken Images Count: 2
